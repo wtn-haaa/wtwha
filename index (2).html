@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Haaaa ✿</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,600&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --accent: #b5682a;
+      --accent2: #d4843e;
+      --bg: #fdf8f2;
+      --bg-mid: #f5e6d0;
+      --bg-card: rgba(255,255,255,0.82);
+      --border: #e8d0b0;
+      --text: #2a1a0a;
+      --text-soft: #7a5a3a;
+      --radius: 20px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family:'Be Vietnam Pro',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    /* AVATAR GLOW */
+    @keyframes avatarGlow {
+      0%,100% { box-shadow: 0 8px 40px #b5682a22, 0 0 0 0 #b5682a00; }
+      50%      { box-shadow: 0 8px 60px #b5682a44, 0 0 28px 8px #f5d8a844; }
+    }
+
+    /* BUBBLE CANVAS */
+    #bubble-canvas {
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+    }
+
+    /* NAVBAR */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 40px;
+      background:rgba(253,248,242,0.78);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-brand { display:flex; align-items:center; gap:12px; cursor:pointer; text-decoration:none; }
+    .nav-avatar {
+      width:44px; height:44px; border-radius:50%;
+      border:2.5px solid var(--accent);
+      overflow:hidden; background:var(--bg-mid);
+      display:flex; align-items:center; justify-content:center; font-size:22px;
+    }
+    /* ĐỂ THÊM ẢNH: thay dòng trên bằng <img src="anh.jpg" style="width:44px;height:44px;border-radius:50%;border:2.5px solid var(--accent);object-fit:cover;"> */
+    .nav-avatar img { width:100%; height:100%; object-fit:cover; }
+    .nav-name { font-family:'Lora',serif; font-size:1.1rem; color:var(--text); line-height:1.2; }
+    .nav-sub { font-size:0.72rem; color:var(--text-soft); font-weight:600; letter-spacing:0.03em; }
+    .nav-links { display:flex; align-items:center; gap:4px; }
+    .nav-links a {
+      text-decoration:none; color:var(--text-soft); font-weight:700;
+      font-size:0.88rem; padding:6px 14px; border-radius:30px;
+      transition:all 0.2s; cursor:pointer;
+    }
+    .nav-links a:hover { color:var(--accent); }
+    .nav-links a.active { color:var(--accent); background:#fdecd8; }
+    .lang-btn {
+      background:var(--accent); color:white; border-radius:30px;
+      padding:6px 14px; font-weight:800; font-size:0.82rem;
+      cursor:pointer; border:none; font-family:'Be Vietnam Pro',sans-serif;
+      transition:background 0.2s; margin-left:4px;
+    }
+    .lang-btn:hover { background:var(--accent2); }
+
+    /* MUSIC */
+    .music-btn {
+      position:fixed; bottom:28px; right:28px; z-index:200;
+      width:52px; height:52px; border-radius:50%;
+      background:var(--accent); border:none; cursor:pointer;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 4px 20px #b5682a44; font-size:22px; color:white;
+      transition:transform 0.2s, background 0.2s;
+    }
+    .music-btn:hover { transform:scale(1.1); background:var(--accent2); }
+    .music-btn.playing { animation:pulse 2s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow:0 4px 20px #b5682a44; }
+      50%      { box-shadow:0 4px 32px #b5682a88; }
+    }
+
+    /* PAGES */
+    .page { display:none; min-height:100vh; padding-top:80px; position:relative; z-index:1; }
+    .page.active { display:block; }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .a0{animation:fadeUp .55s ease both;}
+    .a1{animation:fadeUp .55s ease .08s both;}
+    .a2{animation:fadeUp .55s ease .16s both;}
+    .a3{animation:fadeUp .55s ease .24s both;}
+    .a4{animation:fadeUp .55s ease .32s both;}
+    .a5{animation:fadeUp .55s ease .40s both;}
+
+    /* HOME */
+    #page-home {
+      display:none; flex-direction:column; align-items:center;
+      text-align:center; padding:110px 20px 60px;
+    }
+    #page-home.active { display:flex; }
+    .home-avatar-wrap {
+      width:172px; height:172px; border-radius:50%;
+      border:5px solid white;
+      overflow:hidden; margin-bottom:26px; background:var(--bg-mid);
+      display:flex; align-items:center; justify-content:center; font-size:68px;
+      animation: avatarGlow 4s ease-in-out infinite;
+      transition: transform 0.3s; cursor:default;
+    }
+    .home-avatar-wrap:hover { transform: scale(1.05) rotate(2deg); }
+    .home-avatar-wrap img { width:100%; height:100%; object-fit:cover; }
+    .home-title {
+      font-family:'Lora',serif;
+      font-size:clamp(2rem,5vw,3rem);
+      color:var(--accent); margin-bottom:8px; line-height:1.2;
+    }
+    .home-kaomoji { font-size:1rem; color:var(--text-soft); margin-bottom:44px; }
+    .explore-label {
+      font-family:'Lora',serif;
+      font-size:1.4rem; color:var(--accent);
+      width:100%; max-width:560px; text-align:left; margin-bottom:14px;
+    }
+    .cards { display:flex; flex-direction:column; gap:14px; width:100%; max-width:560px; }
+    .card {
+      background:var(--bg-card); border-radius:var(--radius);
+      padding:22px 22px; cursor:pointer;
+      border:1.5px solid transparent; backdrop-filter:blur(10px);
+      box-shadow:0 2px 18px #b5682a0d; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      display:flex; align-items:center; gap:18px; position:relative; overflow:hidden;
+    }
+    .card::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+      transform: translateX(-100%); transition: transform 0.5s ease;
+    }
+    .card:hover::before { transform: translateX(100%); }
+    .card:hover { border-color:var(--border); box-shadow:0 12px 36px #b5682a22; transform:translateY(-5px) scale(1.01); }
+    .card-icon { font-size:2rem; flex-shrink:0; width:48px; text-align:center; }
+    .card-body { text-align:left; flex:1; }
+    .card-title { font-family:'Lora',serif; font-size:1.15rem; color:var(--text); margin-bottom:3px; }
+    .card-desc { color:var(--text-soft); font-size:0.86rem; line-height:1.5; }
+    .card-arrow { color:var(--border); font-size:1.5rem; flex-shrink:0; transition:transform 0.2s, color 0.2s; }
+    .card:hover .card-arrow { transform:translateX(4px); color:var(--accent); }
+
+    /* INNER PAGES */
+    .inner-page { max-width:640px; margin:0 auto; padding:88px 28px 80px; }
+    .back-btn {
+      display:inline-flex; align-items:center; gap:7px;
+      background:white; border:1.5px solid var(--border);
+      color:var(--text-soft); font-weight:700; font-size:0.86rem;
+      padding:8px 18px; border-radius:30px; cursor:pointer;
+      text-decoration:none; margin-bottom:28px; transition:all 0.2s;
+      font-family:'Be Vietnam Pro',sans-serif;
+    }
+    .back-btn:hover { border-color:var(--accent); color:var(--accent); background:#fdecd8; transform:translateX(-3px); }
+    .page-hero { display:flex; align-items:center; gap:18px; margin-bottom:28px; }
+    .page-hero-avatar {
+      width:60px; height:60px; border-radius:50%;
+      border:3px solid white; box-shadow:0 2px 16px #b5682a22;
+      overflow:hidden; background:var(--bg-mid);
+      display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0;
+    }
+    .page-hero-avatar img { width:100%; height:100%; object-fit:cover; }
+    .page-heading { font-family:'Lora',serif; font-size:1.9rem; color:var(--accent); }
+    .page-heading-sub { color:var(--text-soft); font-size:0.87rem; margin-top:4px; }
+    .section-card {
+      background:var(--bg-card); border-radius:var(--radius);
+      padding:24px 28px; margin-bottom:16px;
+      backdrop-filter:blur(10px); box-shadow:0 2px 18px #b5682a0a;
+      border:1.5px solid var(--border);
+    }
+    .section-card h3 { font-family:'Lora',serif; font-size:1.05rem; color:var(--accent); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+    .section-card p { color:var(--text-soft); line-height:1.8; font-size:0.92rem; }
+    .tag-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .tag { background:#fdecd8; border:1.5px solid var(--border); color:var(--accent); font-size:0.8rem; font-weight:700; padding:4px 14px; border-radius:20px; }
+
+    /* CONTACT */
+    .contact-links { display:flex; flex-direction:column; gap:12px; }
+    .contact-item {
+      background:var(--bg-card); border-radius:var(--radius);
+      padding:18px 24px; display:flex; align-items:center; gap:16px;
+      text-decoration:none; border:1.5px solid transparent;
+      backdrop-filter:blur(10px); box-shadow:0 2px 14px #b5682a0a; transition:all 0.22s;
+    }
+    .contact-item:hover { border-color:var(--border); transform:translateX(5px); box-shadow:0 4px 22px #b5682a1a; }
+    .contact-icon { font-size:1.6rem; width:44px; text-align:center; }
+    .contact-info strong { display:block; font-family:'Lora',serif; font-size:1rem; color:var(--text); }
+    .contact-info span { font-size:0.83rem; color:var(--text-soft); }
+
+    /* CV */
+    #page-cv .inner-page { max-width:800px; }
+    .cv-card {
+      background:white; border-radius:24px; overflow:hidden;
+      box-shadow:0 8px 48px #b5682a18; border:1.5px solid var(--border);
+    }
+    .cv-header {
+      background:linear-gradient(135deg,#fdecd8 0%,#f5d8b0 100%);
+      padding:40px 48px; display:flex; align-items:center; gap:32px;
+      border-bottom:2px solid var(--border); position:relative; overflow:hidden;
+    }
+    .cv-header::after { content:'✿'; position:absolute; right:44px; top:16px; font-size:6rem; opacity:0.1; pointer-events:none; }
+    .cv-photo {
+      width:110px; height:110px; border-radius:50%;
+      border:4px solid white; box-shadow:0 4px 20px #b5682a22;
+      background:var(--bg-mid); display:flex; align-items:center; justify-content:center;
+      font-size:48px; flex-shrink:0; overflow:hidden;
+    }
+    .cv-photo img { width:100%; height:100%; object-fit:cover; }
+    .cv-name { font-family:'Lora',serif; font-size:2rem; color:var(--text); line-height:1.15; margin-bottom:6px; }
+    .cv-title { color:var(--accent); font-weight:700; font-size:0.92rem; letter-spacing:0.03em; margin-bottom:10px; }
+    .cv-quote { font-style:italic; color:var(--text-soft); font-size:0.88rem; line-height:1.6; border-left:3px solid var(--border); padding-left:12px; }
+    .cv-body { padding:36px 48px; }
+    .cv-section { margin-bottom:32px; }
+    .cv-section:last-child { margin-bottom:0; }
+    .cv-section-title {
+      font-family:'Lora',serif; font-size:1.15rem; color:var(--accent);
+      margin-bottom:14px; padding-bottom:8px; border-bottom:2px solid var(--border);
+      display:flex; align-items:center; gap:8px;
+    }
+    .objective-text { color:var(--text-soft); line-height:1.8; font-size:0.92rem; }
+    .edu-item { display:flex; gap:16px; }
+    .edu-dot { width:12px; height:12px; border-radius:50%; background:var(--accent); flex-shrink:0; margin-top:5px; }
+    .edu-degree { font-family:'Lora',serif; font-size:1rem; color:var(--text); }
+    .edu-major { color:var(--accent); font-weight:700; font-size:0.86rem; margin:2px 0; }
+    .edu-meta { color:var(--text-soft); font-size:0.84rem; }
+    .edu-gpa { display:inline-block; margin-top:6px; background:#fdecd8; border:1.5px solid var(--border); color:var(--accent); font-size:0.78rem; font-weight:700; padding:3px 12px; border-radius:20px; }
+    .work-item { margin-bottom:22px; }
+    .work-item:last-child { margin-bottom:0; }
+    .work-header { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:4px; margin-bottom:4px; }
+    .work-title { font-family:'Lora',serif; font-size:1rem; color:var(--text); }
+    .work-period { background:var(--bg); border:1.5px solid var(--border); color:var(--text-soft); font-size:0.75rem; font-weight:700; padding:3px 10px; border-radius:20px; }
+    .work-dept { color:var(--accent); font-size:0.84rem; font-weight:700; margin-bottom:8px; }
+    .work-bullets { padding-left:18px; }
+    .work-bullets li { color:var(--text-soft); font-size:0.88rem; line-height:1.75; margin-bottom:2px; }
+    .work-bullets li::marker { color:var(--accent); }
+    .project-item { background:var(--bg); border-radius:16px; border:1.5px solid var(--border); padding:18px 22px; margin-bottom:14px; }
+    .project-item:last-child { margin-bottom:0; }
+    .project-name { font-family:'Lora',serif; font-size:0.98rem; color:var(--text); margin-bottom:4px; }
+    .project-obj { color:var(--text-soft); font-size:0.84rem; line-height:1.6; margin-bottom:8px; }
+    .project-results { padding-left:16px; }
+    .project-results li { color:var(--text-soft); font-size:0.84rem; line-height:1.7; margin-bottom:2px; }
+    .project-results li::marker { color:var(--accent); }
+    .project-conclusion { margin-top:8px; font-style:italic; color:var(--accent); font-size:0.83rem; font-weight:700; }
+    .skills-grid { display:flex; flex-direction:column; gap:14px; }
+    .skill-group-label { font-weight:800; color:var(--text); font-size:0.86rem; margin-bottom:6px; }
+    .tag.tool { background:white; color:var(--text-soft); border-color:var(--border); }
+    .cv-footer { background:linear-gradient(135deg,#fdecd8,#f5d8b0); border-top:2px solid var(--border); padding:18px 48px; text-align:center; color:var(--text-soft); font-size:0.82rem; }
+
+    footer { text-align:center; padding:28px 20px; color:var(--text-soft); font-size:0.82rem; position:relative; z-index:1; }
+
+    @media(max-width:600px){
+      nav { padding:12px 16px; }
+      .nav-links a { font-size:0.75rem; padding:5px 8px; }
+      .inner-page { padding:78px 18px 60px; }
+      .cv-header { padding:28px 20px; flex-direction:column; text-align:center; }
+      .cv-header::after { display:none; }
+      .cv-body { padding:24px 20px; }
+      .cv-footer { padding:16px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BUBBLE CANVAS BACKGROUND -->
+<canvas id="bubble-canvas"></canvas>
+
+<!-- Thay src bằng link nhạc của bạn, ví dụ src="music.mp3" -->
+<audio id="bgMusic" loop>
+  <source src="nhacmeo.mp3" type="audio/mpeg"/>
+</audio>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-brand" onclick="goPage('home')">
+    <div class="nav-avatar">
+      <!--
+        ĐỂ THÊM ẢNH VÀO ĐÂY:
+        1. Upload file ảnh lên GitHub (ví dụ: anh.jpg)
+        2. Xóa dòng có icon bên dưới
+        3. Thêm vào: <img src="anh.jpg">
+      -->
+      🌿
+    </div>
+    <div>
+      <div class="nav-name">Haaaa</div>
+      <div class="nav-sub" id="nav-sub">If they can do it, they do it</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a id="nav-home" class="active" onclick="goPage('home')">Home</a>
+    <a id="nav-about" onclick="goPage('about')">About</a>
+    <a id="nav-contact" onclick="goPage('contact')">Contact</a>
+    <a id="nav-cv" onclick="goPage('cv')">CV</a>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">VN</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="home-avatar-wrap a0">
+    <!--
+      ĐỂ THÊM ẢNH VÀO ĐÂY:
+      1. Upload file ảnh lên GitHub (ví dụ: anh.jpg)
+      2. Xóa dòng icon bên dưới
+      3. Thêm vào: <img src="anh.jpg">
+    -->
+    🌿
+  </div>
+  <h1 class="home-title a1" id="home-title">Hello — I'm Haaaa ✿</h1>
+  <p class="home-kaomoji a2">(" > ᴗ < ")</p>
+  <p class="explore-label a3" id="lbl-explore">Explore</p>
+  <div class="cards">
+    <div class="card a3" onclick="goPage('about')">
+      <div class="card-icon">🌿</div>
+      <div class="card-body">
+        <div class="card-title" id="c-about-t">About</div>
+        <div class="card-desc" id="c-about-d">Journey & experience.</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+    <div class="card a4" onclick="goPage('contact')">
+      <div class="card-icon">✉️</div>
+      <div class="card-body">
+        <div class="card-title" id="c-contact-t">Contact</div>
+        <div class="card-desc" id="c-contact-d">Email, GitHub, and more.</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+    <div class="card a5" onclick="goPage('cv')">
+      <div class="card-icon">📋</div>
+      <div class="card-body">
+        <div class="card-title" id="c-cv-t">CV / Resume</div>
+        <div class="card-desc" id="c-cv-d">View my resume.</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="page" id="page-about">
+  <div class="inner-page">
+    <button class="back-btn a0" onclick="goPage('home')">← <span id="back-about">Back to Home</span></button>
+    <div class="page-hero a1">
+      <div class="page-hero-avatar">🌿</div>
+      <div>
+        <h2 class="page-heading" id="about-h">About me</h2>
+        <p class="page-heading-sub" id="about-s">A little bit about who I am ✿</p>
+      </div>
+    </div>
+    <div class="section-card a2">
+      <h3>🌿 <span id="ab-intro-t">Introduction</span></h3>
+      <p id="ab-intro-p">Hi! I'm Haaaa — I'm a normal person.</p>
+    </div>
+    <div class="section-card a3">
+      <h3>🎓 <span id="ab-edu-t">Education</span></h3>
+      <p id="ab-edu-p">Foreign Trade University · International Business</p>
+    </div>
+    <div class="section-card a4">
+      <h3>💡 <span id="ab-int-t">Interests</span></h3>
+      <div class="tag-list">
+        <span class="tag">Books</span>
+        <span class="tag">Music</span>
+        <span class="tag">Movies</span>
+        <span class="tag">Travel</span>
+        <span class="tag">Foods</span>
+        <span class="tag">Sleep</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div class="page" id="page-contact">
+  <div class="inner-page">
+    <button class="back-btn a0" onclick="goPage('home')">← <span id="back-contact">Back to Home</span></button>
+    <div class="page-hero a1">
+      <div class="page-hero-avatar">🌿</div>
+      <div>
+        <h2 class="page-heading" id="contact-h">Contact</h2>
+        <p class="page-heading-sub" id="contact-s">Let's connect! ✉️</p>
+      </div>
+    </div>
+    <div class="contact-links">
+      <a class="contact-item a2" href="/cdn-cgi/l/email-protection#046f32372a36303530353534343c31446270712a6160712a726a">
+        <div class="contact-icon">📧</div>
+        <div class="contact-info"><strong>Email</strong><span><span class="__cf_email__" data-cfemail="d5bee3e6fbe7e1e4e1e4e4e5e5ede095b3a1a0fbb0b1a0fba3bb">[email&#160;protected]</span></span></div>
+      </a>
+      <a class="contact-item a3" href="https://github.com/wtn-haaa" target="_blank">
+        <div class="contact-icon">🐙</div>
+        <div class="contact-info"><strong>GitHub</strong><span>github.com/wtn-haaa</span></div>
+      </a>
+      <a class="contact-item a4" href="https://facebook.com/haaanguyn" target="_blank">
+        <div class="contact-icon">💙</div>
+        <div class="contact-info"><strong>Facebook</strong><span>facebook.com/haaanguyn</span></div>
+      </a>
+      <a class="contact-item a5" href="https://instagram.com/_wtnah.12_" target="_blank">
+        <div class="contact-icon">📸</div>
+        <div class="contact-info"><strong>Instagram</strong><span>@_wtnah.12_</span></div>
+      </a>
+    </div>
+    <p style="margin-top:20px;color:var(--text-soft);font-size:0.87rem;text-align:center;" id="contact-loc">Always available ✿</p>
+  </div>
+</div>
+
+<!-- CV -->
+<div class="page" id="page-cv">
+  <div class="inner-page">
+    <button class="back-btn a0" onclick="goPage('home')">← <span id="back-cv">Back to Home</span></button>
+    <div class="cv-card a1">
+      <div class="cv-header">
+        <div class="cv-photo">
+          <!--
+            ĐỂ THÊM ẢNH VÀO ĐÂY:
+            1. Upload file ảnh lên GitHub (ví dụ: anh.jpg)
+            2. Xóa dòng icon bên dưới
+            3. Thêm vào: <img src="anh.jpg">
+          -->
+          🌿
+        </div>
+        <div>
+          <div class="cv-name" id="cv-name">Haaaa</div>
+          <div class="cv-title" id="cv-title">Overthinking Analyst · Specialist in Hypothetical Scenarios</div>
+          <div class="cv-quote" id="cv-quote">"Nobody knows my next move, not even me."</div>
+        </div>
+      </div>
+      <div class="cv-body">
+
+        <div class="cv-section">
+          <div class="cv-section-title">🎯 <span id="cv-s1">Career Objective</span></div>
+          <p class="objective-text" id="cv-obj">To leverage advanced overthinking methodologies and emotional data modeling techniques in order to optimize regret forecasting and hypothetical outcome simulations.</p>
+        </div>
+
+        <div class="cv-section">
+          <div class="cv-section-title">🎓 <span id="cv-s2">Education</span></div>
+          <div class="edu-item">
+            <div class="edu-dot"></div>
+            <div>
+              <div class="edu-degree" id="cv-edu-deg">Bachelor of Internal Dialogue Management</div>
+              <div class="edu-major" id="cv-edu-maj">Major in Cognitive Loop Engineering</div>
+              <div class="edu-meta" id="cv-edu-meta">University of 3AM Thoughts · 2021 – Present</div>
+              <span class="edu-gpa" id="cv-edu-gpa">GPA: fluctuates depending on mood</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cv-section">
+          <div class="cv-section-title">💼 <span id="cv-s3">Work Experience</span></div>
+          <div class="work-item">
+            <div class="work-header">
+              <div class="work-title" id="cv-work-title">Junior Overthinking Analyst</div>
+              <span class="work-period">2022 – Present</span>
+            </div>
+            <div class="work-dept" id="cv-work-dept">Department of Late Night Decisions</div>
+            <ul class="work-bullets" id="cv-work-bullets">
+              <li>Conducted 500+ scenario simulations before sending a single message</li>
+              <li>Built predictive models estimating "what if they misunderstood?" with 92% anxiety accuracy</li>
+              <li>Reduced immediate happiness by 35% through proactive worry deployment</li>
+              <li>Specialized in replaying conversations from 3 years ago for quality control purposes</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cv-section">
+          <div class="cv-section-title">🔬 <span id="cv-s4">Key Projects</span></div>
+          <div class="project-item">
+            <div class="project-name" id="cv-p1-name">Project 01 · Text Message Risk Assessment Model</div>
+            <div class="project-obj" id="cv-p1-obj"><strong id="cv-obj-label">Objective:</strong> Evaluate the emotional impact of adding "haha" versus not adding "haha".</div>
+            <ul class="project-results" id="cv-p1-results">
+              <li>Adding "haha" reduces perceived coldness by 48%</li>
+              <li>Overuse increases awkwardness by 63%</li>
+            </ul>
+            <div class="project-conclusion" id="cv-p1-conc">Conclusion: No safe option found.</div>
+          </div>
+          <div class="project-item">
+            <div class="project-name" id="cv-p2-name">Project 02 · Social Interaction Replay System</div>
+            <div class="project-obj" id="cv-p2-obj">Built an automated memory replay engine that activates at night. Key feature: highlights minor embarrassing moments in 4K resolution.</div>
+            <ul class="project-results" id="cv-p2-results">
+              <li>System stability: Extremely reliable</li>
+              <li>User satisfaction: Questionable</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cv-section">
+          <div class="cv-section-title">⚡ <span id="cv-s5">Technical Skills</span></div>
+          <div class="skills-grid">
+            <div>
+              <div class="skill-group-label" id="cv-skills-label">Core Skills</div>
+              <div class="tag-list" id="cv-skills-tags">
+                <span class="tag">Advanced What-if Simulation</span>
+                <span class="tag">Silence Interpretation Analysis</span>
+                <span class="tag">Tone Detection Without Evidence</span>
+                <span class="tag">Deadline Avoidance Strategy</span>
+              </div>
+            </div>
+            <div>
+              <div class="skill-group-label" id="cv-tools-label">Tools</div>
+              <div class="tag-list">
+                <span class="tag tool">🧠 Brain v24/7</span>
+                <span class="tag tool">💭 Overactive Imagination</span>
+                <span class="tag tool">☕ Caffeine</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="cv-footer" id="cv-footer-text">At the end of the day, good evening.</div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 Haaaa — Built with 💗 on GitHub</footer>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  function goPage(name) {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.nav-links a').forEach(function(a) { a.classList.remove('active'); });
+    var pg = document.getElementById('page-' + name);
+    pg.classList.add('active');
+    pg.querySelectorAll('[class*="a"]').forEach(function(el) { el.style.animation='none'; el.offsetHeight; el.style.animation=''; });
+    var nav = document.getElementById('nav-' + name);
+    if (nav) nav.classList.add('active');
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  var lang = 'en';
+  var T = {
+    en: {
+      'nav-sub':'If they can do it, they do it',
+      'home-title':"Hello — I'm Haaaa ✿",
+      'lbl-explore':'Explore',
+      'c-about-t':'About', 'c-about-d':'Journey & experience.',
+      'c-contact-t':'Contact', 'c-contact-d':'Email, GitHub, and more.',
+      'c-cv-t':'CV / Resume', 'c-cv-d':'View my resume.',
+      'back-about':'Back to Home', 'back-contact':'Back to Home', 'back-cv':'Back to Home',
+      'about-h':'About me', 'about-s':'A little bit about who I am ✿',
+      'ab-intro-t':'Introduction', 'ab-intro-p':"Hi! I'm Haaaa — I'm a normal person.",
+      'ab-edu-t':'Education', 'ab-edu-p':'Foreign Trade University · International Business',
+      'ab-int-t':'Interests',
+      'contact-h':'Contact', 'contact-s':"Let's connect! ✉️",
+      'contact-loc':'Always available ✿',
+      'back-cv':'Back to Home',
+      'cv-name':'Haaaa',
+      'cv-title':'Overthinking Analyst · Specialist in Hypothetical Scenarios',
+      'cv-quote':'"Nobody knows my next move, not even me."',
+      'cv-s1':'Career Objective',
+      'cv-obj':'To leverage advanced overthinking methodologies and emotional data modeling techniques in order to optimize regret forecasting and hypothetical outcome simulations.',
+      'cv-s2':'Education',
+      'cv-edu-deg':'Bachelor of Internal Dialogue Management',
+      'cv-edu-maj':'Major in Cognitive Loop Engineering',
+      'cv-edu-meta':'University of 3AM Thoughts · 2024 – Present',
+      'cv-edu-gpa':'GPA: fluctuates depending on mood',
+      'cv-s3':'Work Experience',
+      'cv-work-title':'Junior Overthinking Analyst',
+      'cv-work-dept':'Department of Late Night Decisions',
+      'cv-s4':'Key Projects',
+      'cv-p1-name':'Project 01 · Text Message Risk Assessment Model',
+      'cv-obj-label':'Objective:',
+      'cv-p1-conc':'Conclusion: No safe option found.',
+      'cv-p2-name':'Project 02 · Social Interaction Replay System',
+      'cv-s5':'Technical Skills',
+      'cv-skills-label':'Core Skills',
+      'cv-tools-label':'Tools',
+      'cv-footer-text':'At the end of the day, good evening.'
+    },
+    vn: {
+      'nav-sub':'Cuộc sống là không ngừng bỏ cuộc',
+      'home-title':'Xin chào — Mình là Haaaa ✿',
+      'lbl-explore':'Khám phá',
+      'c-about-t':'Giới thiệu', 'c-about-d':'Hành trình và trải nghiệm.',
+      'c-contact-t':'Liên hệ', 'c-contact-d':'Email, GitHub và nhiều hơn nữa.',
+      'c-cv-t':'CV / Hồ sơ', 'c-cv-d':'Xem CV của mình.',
+      'back-about':'Quay về trang chủ', 'back-contact':'Quay về trang chủ', 'back-cv':'Quay về trang chủ',
+      'about-h':'Về mình', 'about-s':'Một chút về bản thân mình ✿',
+      'ab-intro-t':'Giới thiệu', 'ab-intro-p':'Chào! Mình là Haaaa — Mình là người bình thường.',
+      'ab-edu-t':'Học vấn', 'ab-edu-p':'Đại học Ngoại Thương · Kinh tế Đối ngoại',
+      'ab-int-t':'Sở thích',
+      'contact-h':'Liên hệ', 'contact-s':'Kết nối với mình nhé! ✉️',
+      'contact-loc':'Luôn sẵn sàng ✿',
+      'cv-name':'Haaaa',
+      'cv-title':'Chuyên viên Overthinking · Chuyên gia tình huống giả định',
+      'cv-quote':'"Không ai biết bước tiếp theo của mình, kể cả bản thân mình."',
+      'cv-s1':'Mục tiêu nghề nghiệp',
+      'cv-obj':'Tận dụng các phương pháp suy nghĩ quá mức tiên tiến và kỹ thuật mô hình hóa dữ liệu cảm xúc để tối ưu hóa dự báo hối tiếc và mô phỏng kết quả giả định.',
+      'cv-s2':'Học vấn',
+      'cv-edu-deg':'Cử nhân Quản lý đối thoại nội tâm',
+      'cv-edu-maj':'Chuyên ngành Kỹ thuật vòng lặp nhận thức',
+      'cv-edu-meta':'Đại học Suy nghĩ lúc 3 giờ sáng · 2024 – Hiện tại',
+      'cv-edu-gpa':'GPA: dao động theo tâm trạng',
+      'cv-s3':'Kinh nghiệm làm việc',
+      'cv-work-title':'Chuyên viên Overthinking (Junior)',
+      'cv-work-dept':'Phòng quyết định đêm Khuya',
+      'cv-s4':'Dự án tiêu biểu',
+      'cv-p1-name':'Dự án 01 · Mô hình đánh giá rủi ro tin nhắn',
+      'cv-obj-label':'Mục tiêu:',
+      'cv-p1-conc':'Kết luận: Không tìm được lựa chọn an toàn nào.',
+      'cv-p2-name':'Dự án 02 · Hệ thống phát lại tương tác xã hội',
+      'cv-s5':'Kỹ năng',
+      'cv-skills-label':'Kỹ năng cốt lõi',
+      'cv-tools-label':'Công cụ',
+      'cv-footer-text':'Đừng quan tâm đến năng lượng tích cực.'
+    }
+  };
+
+  function toggleLang() {
+    lang = lang === 'en' ? 'vn' : 'en';
+    document.getElementById('langBtn').textContent = lang === 'en' ? 'VN' : 'EN';
+    var t = T[lang];
+    for (var id in t) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = t[id];
+    }
+    if (lang === 'vn') {
+      document.getElementById('cv-work-bullets').innerHTML =
+        '<li>Thực hiện 500+ mô phỏng tình huống trước khi gửi một tin nhắn duy nhất</li>' +
+        '<li>Xây dựng mô hình dự đoán "nếu họ hiểu nhầm thì sao?" với độ chính xác lo lắng 92%</li>' +
+        '<li>Giảm hạnh phúc tức thời 35% thông qua triển khai lo lắng chủ động</li>' +
+        '<li>Chuyên tái hiện các cuộc hội thoại từ 3 năm trước vì mục đích kiểm soát chất lượng</li>';
+      document.getElementById('cv-p1-obj').innerHTML = '<strong>Mục tiêu:</strong> Đánh giá tác động cảm xúc của việc thêm "haha" so với không thêm "haha".';
+      document.getElementById('cv-p1-results').innerHTML =
+        '<li>Thêm "haha" giảm mức độ lạnh lùng cảm nhận được 48%</li>' +
+        '<li>Dùng quá nhiều làm tăng sự khó xử 63%</li>';
+      document.getElementById('cv-p2-obj').textContent = 'Xây dựng hệ thống phát lại ký ức tự động kích hoạt vào ban đêm. Tính năng nổi bật: làm nổi bật các khoảnh khắc xấu hổ nhỏ ở độ phân giải 4K.';
+      document.getElementById('cv-p2-results').innerHTML =
+        '<li>Độ ổn định hệ thống: Cực kỳ đáng tin cậy</li>' +
+        '<li>Sự hài lòng của người dùng: Đáng ngờ</li>';
+      document.getElementById('cv-skills-tags').innerHTML =
+        '<span class="tag">Mô phỏng What-if nâng cao</span>' +
+        '<span class="tag">Phân tích giải nghĩa im lặng</span>' +
+        '<span class="tag">Phát hiện giọng điệu không có bằng chứng</span>' +
+        '<span class="tag">Tối ưu hóa chiến lược trốn Deadline</span>';
+    } else {
+      document.getElementById('cv-work-bullets').innerHTML =
+        '<li>Conducted 500+ scenario simulations before sending a single message</li>' +
+        '<li>Built predictive models estimating "what if they misunderstood?" with 92% anxiety accuracy</li>' +
+        '<li>Reduced immediate happiness by 35% through proactive worry deployment</li>' +
+        '<li>Specialized in replaying conversations from 3 years ago for quality control purposes</li>';
+      document.getElementById('cv-p1-obj').innerHTML = '<strong>Objective:</strong> Evaluate the emotional impact of adding "haha" versus not adding "haha".';
+      document.getElementById('cv-p1-results').innerHTML =
+        '<li>Adding "haha" reduces perceived coldness by 48%</li>' +
+        '<li>Overuse increases awkwardness by 63%</li>';
+      document.getElementById('cv-p2-obj').textContent = 'Built an automated memory replay engine that activates at night. Key feature: highlights minor embarrassing moments in 4K resolution.';
+      document.getElementById('cv-p2-results').innerHTML =
+        '<li>System stability: Extremely reliable</li>' +
+        '<li>User satisfaction: Questionable</li>';
+      document.getElementById('cv-skills-tags').innerHTML =
+        '<span class="tag">Advanced What-if Simulation</span>' +
+        '<span class="tag">Silence Interpretation Analysis</span>' +
+        '<span class="tag">Tone Detection Without Evidence</span>' +
+        '<span class="tag">Deadline Avoidance Strategy</span>';
+    }
+  }
+
+  var audio = document.getElementById('bgMusic');
+  var mBtn = document.getElementById('musicBtn');
+  var playing = false;
+  window.addEventListener('load', function() {
+    audio.volume = 0.35;
+    audio.play().then(function() { playing=true; mBtn.textContent='🎶'; mBtn.classList.add('playing'); }).catch(function(){});
+  });
+  document.addEventListener('click', function firstClick() {
+    if (!playing) { audio.play().then(function(){ playing=true; mBtn.textContent='🎶'; mBtn.classList.add('playing'); }).catch(function(){}); }
+    document.removeEventListener('click', firstClick);
+  }, { once:true });
+
+  function toggleMusic() {
+    if (playing) {
+      audio.pause(); playing=false; mBtn.textContent='🎵'; mBtn.classList.remove('playing');
+    } else {
+      audio.play().then(function(){ playing=true; mBtn.textContent='🎶'; mBtn.classList.add('playing'); }).catch(function(){});
+    }
+  }
+
+  /* BUBBLE CANVAS */
+  (function() {
+    var canvas = document.getElementById('bubble-canvas');
+    var ctx = canvas.getContext('2d');
+
+    // Palette hợp theme kem/cam/vàng
+    var colors = [
+      { r:245, g:216, b:168 }, // vàng kem đậm
+      { r:253, g:236, b:216 }, // kem nhạt
+      { r:232, g:192, b:140 }, // cam nhạt
+      { r:255, g:248, b:235 }, // trắng kem
+      { r:212, g:160, b:100 }, // cam nâu nhạt
+      { r:250, g:225, b:195 }, // peach
+    ];
+
+    var bubbles = [];
+    var NUM = 28;
+
+    function resize() {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function randBetween(a, b) { return a + Math.random() * (b - a); }
+
+    function createBubble(fromBottom) {
+      var c = colors[Math.floor(Math.random() * colors.length)];
+      var r = randBetween(18, 72);
+      return {
+        x: randBetween(r, window.innerWidth - r),
+        y: fromBottom ? window.innerHeight + r + randBetween(0, 300) : randBetween(-r, window.innerHeight + r),
+        r: r,
+        vx: randBetween(-0.35, 0.35),
+        vy: -randBetween(0.25, 0.7),  // luôn đi lên
+        wobbleSpeed: randBetween(0.008, 0.025),
+        wobbleAmp: randBetween(0.4, 1.2),
+        wobbleOffset: Math.random() * Math.PI * 2,
+        alpha: randBetween(0.13, 0.38),
+        color: c,
+        // shimmer highlight
+        shimmerAngle: randBetween(0, Math.PI * 2),
+      };
+    }
+
+    for (var i = 0; i < NUM; i++) bubbles.push(createBubble(false));
+
+    function drawBubble(b, t) {
+      var wobble = Math.sin(t * b.wobbleSpeed + b.wobbleOffset) * b.wobbleAmp;
+      var x = b.x + wobble;
+      var y = b.y;
+      var r = b.r;
+      var c = b.color;
+
+      ctx.save();
+
+      // Fill
+      var grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, r*0.05, x, y, r);
+      grad.addColorStop(0, 'rgba('+c.r+','+c.g+','+c.b+','+(b.alpha + 0.15)+')');
+      grad.addColorStop(0.6, 'rgba('+c.r+','+c.g+','+c.b+','+b.alpha+')');
+      grad.addColorStop(1, 'rgba('+c.r+','+c.g+','+c.b+',0)');
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Rim highlight (stroke bong bóng xà phòng)
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.strokeStyle = 'rgba('+c.r+','+c.g+','+c.b+','+(b.alpha * 1.6)+')';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+
+      // Gloss spot trên-trái
+      var gx = x - r * 0.32;
+      var gy = y - r * 0.35;
+      var glossGrad = ctx.createRadialGradient(gx, gy, 0, gx, gy, r * 0.38);
+      glossGrad.addColorStop(0, 'rgba(255,255,255,0.55)');
+      glossGrad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fillStyle = glossGrad;
+      ctx.fill();
+
+      // Nhỏ gloss dưới-phải (xà phòng feel)
+      var g2x = x + r * 0.28;
+      var g2y = y + r * 0.3;
+      var g2 = ctx.createRadialGradient(g2x, g2y, 0, g2x, g2y, r * 0.18);
+      g2.addColorStop(0, 'rgba(255,255,255,0.18)');
+      g2.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fillStyle = g2;
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    var t = 0;
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      t++;
+      for (var i = 0; i < bubbles.length; i++) {
+        var b = bubbles[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        drawBubble(b, t);
+        // reset khi lên quá màn hình
+        if (b.y < -b.r * 2) {
+          bubbles[i] = createBubble(true);
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  })();
+
+</script>
+</body>
+</html>
